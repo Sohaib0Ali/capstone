@@ -6,6 +6,7 @@ import '../widgets/app_logo.dart';
 import 'detail_screen.dart';
 import 'favorites_screen.dart';
 import 'settings_screen.dart';
+import 'notifications_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,6 +24,12 @@ class _HomeScreenState extends State<HomeScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    // Ensure persistence demo logs appear on app start
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<AppState>().logDemoPersistence(source: 'appStart');
+      }
+    });
   }
 
   @override
@@ -50,6 +57,12 @@ class _HomeScreenState extends State<HomeScreen>
             icon: const Icon(Icons.favorite_rounded),
             onPressed: () =>
                 Navigator.pushNamed(context, FavoritesScreen.routeName),
+          ),
+          IconButton(
+            tooltip: 'Notifications',
+            icon: const Icon(Icons.notifications_rounded),
+            onPressed: () =>
+                Navigator.pushNamed(context, NotificationsScreen.routeName),
           ),
           IconButton(
             tooltip: 'Settings',

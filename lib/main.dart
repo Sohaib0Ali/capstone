@@ -9,6 +9,7 @@ import 'screens/home_screen.dart';
 import 'screens/detail_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/favorites_screen.dart';
+import 'screens/notifications_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,6 +47,7 @@ class FinalProjectApp extends StatelessWidget {
         HomeScreen.routeName: (_) => const HomeScreen(),
         FavoritesScreen.routeName: (_) => const FavoritesScreen(),
         SettingsScreen.routeName: (_) => const SettingsScreen(),
+        NotificationsScreen.routeName: (_) => const NotificationsScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == DetailScreen.routeName) {

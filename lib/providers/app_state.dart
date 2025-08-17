@@ -62,6 +62,7 @@ class AppState extends ChangeNotifier {
     await _storageService.getString(demoKey);
 
     await _loadItems();
+    _logItemsSnapshot(source: 'initialize');
     _initialized = true;
     notifyListeners();
   }
@@ -74,6 +75,7 @@ class AppState extends ChangeNotifier {
       // Fallback to dummy project-related items if API fails
       _items = _dummyItems();
     }
+    _logItemsSnapshot(source: '_loadItems');
   }
 
   Future<void> refreshItems() async {
@@ -216,5 +218,28 @@ class AppState extends ChangeNotifier {
       title: 'Test Notification',
       body: 'This is a test notification from the Capstone app.',
     );
+    await logDemoPersistence(source: 'notifyButton');
+    _logItemsSnapshot(source: 'notifyButton');
+  }
+
+  Future<void> logDemoPersistence({String source = 'unknown'}) async {
+    // ignore: avoid_print
+    print('[AppState] demo persistence START (source=$source)');
+    final String demoKey = 'demo.persistence.key';
+    final String demoValue = 'stored-from-$source-${DateTime.now().toIso8601String()}';
+    await _storageService.saveString(demoKey, demoValue);
+    await _storageService.getString(demoKey);
+    await _storageService.saveBool('demo.persistence.flag', true);
+    await _storageService.getBool('demo.persistence.flag', defaultValue: false);
+    // ignore: avoid_print
+    print('[AppState] demo persistence END (source=$source)');
+  }
+
+  void _logItemsSnapshot({required String source}) {
+    // ignore: avoid_print
+    print('[AppState] items snapshot (source=$source) count=${_items.length}');
+    final preview = _items.take(5).map((e) => '#${e.id} ${e.title}').join(' | ');
+    // ignore: avoid_print
+    print('[AppState] items preview: $preview');
   }
 }
