@@ -94,9 +94,35 @@ class _FeedTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
     final items = appState.items;
+    if (items.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.inbox_rounded, size: 56, color: Colors.grey),
+              const SizedBox(height: 12),
+              const Text('No items yet', style: TextStyle(fontSize: 16)),
+              const SizedBox(height: 8),
+              const Text(
+                'Pull to refresh or tap Retry to load demo content.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Retry'),
+                onPressed: () => context.read<AppState>().refreshItems(),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     return RefreshIndicator(
-      onRefresh: () async =>
-          Future<void>.delayed(const Duration(milliseconds: 500)),
+      onRefresh: () => context.read<AppState>().refreshItems(),
       child: ListView.builder(
         padding: const EdgeInsets.symmetric(vertical: 8),
         itemCount: items.length,
@@ -202,6 +228,33 @@ class _FeedTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
     final items = appState.items;
+    if (items.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.inbox_rounded, size: 56, color: Colors.grey),
+              const SizedBox(height: 12),
+              const Text('No items yet', style: TextStyle(fontSize: 16)),
+              const SizedBox(height: 8),
+              const Text(
+                'Tap Retry to load demo content.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Retry'),
+                onPressed: () => context.read<AppState>().refreshItems(),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     final isWide = MediaQuery.of(context).size.width > 700;
     final crossAxisCount = isWide ? 4 : 2;
     // Fixed tile height to avoid overflow while keeping a balanced look
@@ -256,6 +309,11 @@ class _FeedTab extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(
+                        Icons.chevron_right_rounded,
+                        color: Colors.white70,
                       ),
                     ],
                   ),

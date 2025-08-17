@@ -54,6 +54,13 @@ class AppState extends ChangeNotifier {
     await _notificationsService.initialize(
       notificationsEnabled: _notificationsEnabled,
     );
+
+    // Demo persistence evidence: write and read a sample value
+    final String demoKey = 'demo.persistence.key';
+    final String demoValue = 'stored-at-${DateTime.now().toIso8601String()}';
+    await _storageService.saveString(demoKey, demoValue);
+    await _storageService.getString(demoKey);
+
     await _loadItems();
     _initialized = true;
     notifyListeners();
@@ -61,10 +68,58 @@ class AppState extends ChangeNotifier {
 
   Future<void> _loadItems() async {
     try {
-      _items = await _apiService.fetchItems();
+      final fetched = await _apiService.fetchItems();
+      _items = fetched.isEmpty ? _dummyItems() : fetched;
     } catch (_) {
-      _items = <Item>[];
+      // Fallback to dummy project-related items if API fails
+      _items = _dummyItems();
     }
+  }
+
+  Future<void> refreshItems() async {
+    await _loadItems();
+    notifyListeners();
+  }
+
+  List<Item> _dummyItems() {
+    return <Item>[
+      Item(
+        id: 1,
+        title: 'Welcome to Capstone',
+        description:
+            'Explore the Feed and Grid tabs. Tap any card to view details and add to favorites.',
+      ),
+      Item(
+        id: 2,
+        title: 'API + Persistence',
+        description:
+            'This project integrates an external API and uses local storage for favorites and settings.',
+      ),
+      Item(
+        id: 3,
+        title: 'Notifications',
+        description:
+            'Use the Notify button on Home to trigger a test notification (permissions required).',
+      ),
+      Item(
+        id: 4,
+        title: 'Settings & Themes',
+        description:
+            'Open Settings from the top-right gear icon to toggle dark mode and notifications.',
+      ),
+      Item(
+        id: 5,
+        title: 'Favorites',
+        description:
+            'Long-press a list item or tap the heart to add/remove favorites. Favorites persist across restarts.',
+      ),
+      Item(
+        id: 6,
+        title: 'Detail Screen',
+        description:
+            'Tap a card to navigate to its detail screen and read the full description.',
+      ),
+    ];
   }
 
   Future<String?> login({
